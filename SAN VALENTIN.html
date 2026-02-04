@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para Carmen ❤️</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lobster&family=Quicksand:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #ff4081;
+            --envelope-color: #ff80ab;
+            --envelope-dark: #f06292;
+            --bg-color: #fff0f3;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            width: 100vw;
+            font-family: 'Quicksand', sans-serif;
+            overflow: hidden;
+        }
+
+        /* Contenedor del Sobre - Centrado Absoluto */
+        .envelope-wrapper {
+            position: relative;
+            width: 350px;
+            height: 230px;
+            z-index: 5;
+        }
+
+        .envelope {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background-color: var(--envelope-dark);
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        .lid {
+            position: absolute;
+            top: 0; left: 0;
+            border-left: 175px solid transparent;
+            border-right: 175px solid transparent;
+            border-top: 125px solid var(--envelope-color);
+            transform-origin: top;
+            transition: transform 0.6s ease;
+            z-index: 15;
+        }
+
+        .heart-opener {
+            position: absolute;
+            top: 60px; left: 50%;
+            transform: translateX(-50%);
+            font-size: 50px;
+            z-index: 16;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: translateX(-50%) scale(1); }
+            50% { transform: translateX(-50%) scale(1.2); }
+        }
+
+        /* La Carta - Sale del sobre y se queda en el centro */
+        .card {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.4); /* Empieza pequeña dentro del sobre */
+            width: 310px;
+            height: 420px;
+            background: white;
+            border-radius: 20px;
+            border: 4px solid var(--primary);
+            opacity: 0;
+            z-index: 5; /* Detrás del sobre inicialmente */
+            padding: 25px;
+            box-sizing: border-box;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        /* Estado Abierto: La carta sube y se agranda */
+        .open .lid { transform: rotateX(180deg); z-index: 1; }
+        .open .heart-opener { opacity: 0; pointer-events: none; }
+        .open .card {
+            opacity: 1;
+            transform: translate(-50%, -65%) scale(1); /* Centrada y un poco hacia arriba */
+            z-index: 20; /* Pasa al frente */
+        }
+
+        /* Contenido Fijo */
+        .snoopy-img { width: 140px; margin-bottom: 15px; flex-shrink: 0; }
+        h1 { font-family: 'Lobster', cursive; color: #ad1457; font-size: 1.8rem; margin: 0; }
+
+        /* Contenedores de texto con Fade */
+        .text-container {
+            position: relative;
+            width: 100%;
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .fade-content {
+            position: absolute;
+            width: 100%;
+            transition: opacity 0.4s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .hidden { opacity: 0; pointer-events: none; }
+        .visible { opacity: 1; pointer-events: auto; }
+
+        p { font-size: 1.1rem; color: #444; margin: 10px 0; }
+        h2 { color: var(--primary); font-size: 1.4rem; margin: 10px 0; }
+
+        .arrow-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            width: 45px; height: 45px;
+            border-radius: 50%;
+            font-size: 22px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: bounce 1s infinite;
+        }
+
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(8px); } }
+
+        .btn-container { display: flex; justify-content: center; gap: 15px; margin-top: 15px; }
+        .btn {
+            padding: 10px 25px;
+            border-radius: 50px;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            font-family: 'Quicksand', sans-serif;
+            font-size: 1rem;
+        }
+        .btn-yes { background-color: var(--primary); color: white; }
+        .btn-no { background-color: #fce4ec; color: #ad1457; border: 1px solid #f8bbd0; }
+
+        /* Pantalla Final Centrada */
+        #step2 {
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 320px;
+            background: white;
+            padding: 40px;
+            border-radius: 30px;
+            border: 6px solid var(--primary);
+            display: none;
+            z-index: 100;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+        }
+
+        .heart-rain {
+            position: absolute;
+            color: var(--primary);
+            animation: float linear forwards;
+            pointer-events: none;
+            z-index: 1000;
+        }
+        @keyframes float { to { transform: translateY(-110vh) rotate(360deg); opacity: 0; } }
+    </style>
+</head>
+<body>
+
+    <div id="main-wrapper">
+        <div class="envelope-wrapper">
+            <div class="envelope" onclick="abrirSobre()">
+                <div class="lid"></div>
+                <div class="heart-opener">❤️</div>
+            </div>
+
+            <div class="card" id="mainCard">
+                <img src="https://media.tenor.com/amZ5wxLGUEoAAAAi/hugging-heart-snoopy.gif" class="snoopy-img">
+                <h1>Para Carmen ❤️</h1>
+
+                <div class="text-container">
+                    <div id="part1" class="fade-content visible">
+                        <p>Tengo algo muy importante que quiero preguntarte...</p>
+                        <button class="arrow-btn" onclick="cambiarTexto(event)">↓</button>
+                    </div>
+
+                    <div id="part2" class="fade-content hidden">
+                        <h2>¿Puedo ser tu San Valentín?</h2>
+                        <div class="btn-container">
+                            <button class="btn btn-yes" onclick="aceptar(event)">¡SÍ! 🐾</button>
+                            <button class="btn btn-no" id="btn-no" onmouseover="moverBoton(this)" onclick="moverBoton(this)">No</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="step2">
+        <img src="https://media1.tenor.com/m/qPa9uJo18WcAAAAC/snoopy.gif" class="snoopy-img" style="width: 120px;">
+        <h1>¡SIII! 😍</h1>
+        <p>¡Me haces la persona más feliz del mundo!</p>
+        <p style="font-weight: bold; color: var(--primary); font-size: 1.2rem;">¡Te amo muchísimo! ❤️</p>
+    </div>
+
+    <script>
+        function abrirSobre() {
+            document.querySelector('.envelope-wrapper').classList.add('open');
+        }
+
+        function cambiarTexto(event) {
+            event.stopPropagation();
+            document.getElementById('part1').classList.remove('visible');
+            document.getElementById('part1').classList.add('hidden');
+            setTimeout(() => {
+                document.getElementById('part2').classList.remove('hidden');
+                document.getElementById('part2').classList.add('visible');
+            }, 400);
+        }
+
+        function moverBoton(elm) {
+            const padding = 100;
+            const maxX = window.innerWidth - elm.offsetWidth - padding;
+            const maxY = window.innerHeight - elm.offsetHeight - padding;
+            elm.style.position = 'fixed';
+            elm.style.left = Math.max(padding, Math.random() * maxX) + 'px';
+            elm.style.top = Math.max(padding, Math.random() * maxY) + 'px';
+            elm.style.zIndex = "1000";
+        }
+
+        function aceptar(event) {
+            event.stopPropagation();
+            document.getElementById("main-wrapper").style.display = "none";
+            document.getElementById("step2").style.display = "block";
+
+            setInterval(() => {
+                const h = document.createElement("div");
+                h.classList.add("heart-rain");
+                h.textContent = "❤️";
+                h.style.left = Math.random() * 100 + "vw";
+                h.style.top = "100vh";
+                h.style.fontSize = Math.random() * 20 + 20 + "px";
+                h.style.animationDuration = (Math.random() * 2 + 2) + "s";
+                document.body.appendChild(h);
+                setTimeout(() => h.remove(), 4000);
+            }, 100);
+        }
+    </script>
+</body>
+</html>
